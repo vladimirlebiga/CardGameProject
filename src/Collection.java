@@ -6,7 +6,7 @@ import java.util.Random;
 public class Collection {
     private final ArrayList<Card> cards;
 
-
+    // Main Constructor
     public Collection(boolean includeJokers, boolean isRussian){
         cards = new ArrayList<>();
 
@@ -22,7 +22,7 @@ public class Collection {
             }
         }
 
-
+        // if statment
         if (includeJokers){
             cards.add(new Card("red", "Joker"));
             cards.add(new Card("black", "Joker"));
@@ -33,12 +33,18 @@ public class Collection {
         cards = new ArrayList<>();
     }
 
+    // method
+    public int size(){
+        return cards.size();
+    }
+
     @Override
         public String toString(){
         return String.join("\n", Arrays.stream(cards.toArray())
                 .map(Object::toString)
                 .toArray(String[]::new)); // lambda shortcut
     }
+
 
 
     public void shuffle() {
@@ -59,6 +65,7 @@ public class Collection {
         }
     }
 
+
     public void addCard(Card card, boolean toTop){
         if (toTop){cards.addFirst(card);
         }else {
@@ -70,6 +77,13 @@ public class Collection {
     public void addCard(Card card){
         addCard(card,  true);
     }
+
+//    public void moveTopCardToBottom (){
+//        Card topCard = getTopCard();
+//        if( topCard != null){
+//            addCard(topCard, false);
+//        }
+//    }
 
 }
 
