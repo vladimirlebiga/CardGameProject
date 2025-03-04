@@ -1,6 +1,7 @@
 import java.sql.SQLOutput;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
 
 public class Main {
 
@@ -12,6 +13,9 @@ public class Main {
         Collection myDeck = new Collection(false, true);
         Collection playerOne = new Collection();
         Collection playerTwo = new Collection();
+        Collection tableDefeated = new Collection();
+        Collection tableToDefeat = new Collection();
+
 
         System.out.println("\nBefore shuffling:");
         System.out.println(myDeck);
@@ -23,11 +27,11 @@ public class Main {
         System.out.println(myDeck);
 
         // dealing player cards
-        while (playerOne.size() < maxCards){
+        while (playerOne.size() < maxCards) {
             playerOne.addCard(myDeck.getTopCard());
         }
 
-        while (playerTwo.size() < maxCards){
+        while (playerTwo.size() < maxCards) {
             playerTwo.addCard(myDeck.getTopCard());
         }
 
@@ -51,10 +55,9 @@ public class Main {
         System.out.println(myDeck);
 
 
-
         // Homework
         // Compare the first cards of each player
-        Card playerOneCard = playerOne.getTopCard();
+//        Card playerOneCard = playerOne.getTopCard();
 //        Card playerTwoCard = playerTwo.getTopCard();
 
 
@@ -74,51 +77,28 @@ public class Main {
             System.out.println("Player Two has no trump cards.");
         }
 
+        // Find out who has the lowest trump card
+        int playerWithLowestTrump = playersTurn(trumpCard.getSuit(), playerOne, playerTwo);
+        System.out.println("Player " + (playerWithLowestTrump + 1) + " starts the game!");
 
-        System.out.println("\nPlayer One's card: " + playerOneCard);
+
+//        System.out.println("\nPlayer One's card: " + playerOneCard);
 //        System.out.println("Player Two's card: " + playerTwoCard);
 
         //
-        for(Card defendCard: playerTwo.getCards()) {
-            System.out.println(defendCard + " " + canBeat(defendCard, playerOneCard, trumpCard.getSuit()));
-        }
-
-
-        // Testing
-//        if (playerOneCard != null && playerTwoCard != null) {
-//            String trumpSuit = (trumpCard != null) ? trumpCard.getSuit() : null;
-//            boolean result = canBeat(playerOneCard, playerTwoCard, trumpSuit);
-//
-//            if(result) {
-//                System.out.println("Player One's card beats Player Two's card!");
-//            } else {
-//                System.out.println("Player Two's card beats Player One's card!");
-//            }
-//        } else {
-//            System.out.println("nothing to compare");
+//        for (Card defendCard : playerTwo.getCards()) {
+//            System.out.println(defendCard + " " + canBeat(defendCard, playerOneCard, trumpCard.getSuit()));
 //        }
 
+        makeChoice(playerOne.getCards());
 
 
-        //        // Peek at new deck
-        //        System.out.println("\nNew Deck: ");
-        //        System.out.println(myDeck);
-
-
-
-// TODO: test canBeat from collection
-        // Peek at the new top card
-//        Card newTopCard = myDeck.peekTopCard();
-//        System.out.println("\nNew top Card is: " + newTopCard);
-
-
-//        System.out.println(myDeck);
 
     }
 
-public static boolean canBeat(Card a, Card b, String trumpSuit){
+    public static boolean canBeat(Card a, Card b, String trumpSuit) {
 
-        if(a.getSuit().equals(b.getSuit())){
+        if (a.getSuit().equals(b.getSuit())) {
             return Collection.cardFaces.get(a.getFace()) > Collection.cardFaces.get(b.getFace());
 
         } else if (a.getSuit().equals(trumpSuit)) {
@@ -140,7 +120,76 @@ public static boolean canBeat(Card a, Card b, String trumpSuit){
         return trumpCards;
     }
 
+
+    public static int playersTurn(String trumpSuit, Collection... players) {
+        int player = -1;
+        int lowestVal = 15;
+        Card lowestTrump = null;
+        boolean exitEarly = false;
+        for (int i = 0; i < players.length && !exitEarly; i++) {
+            for (Card c : players[i].getCards()) {
+                if (c.getSuit().equals(trumpSuit) && Collection.cardFaces.get(c.getFace()) < lowestVal) {
+                    player = i;
+                    lowestVal = Collection.cardFaces.get(c.getFace());
+                    lowestTrump = c;
+                    if (lowestVal == 2) {
+                        exitEarly = true;
+                        break;
+                    }
+                }
+            }
+        }
+        if (player > -1) {
+            System.out.println("player: " + (player + 1) + " has " + lowestTrump);
+        } else {
+            System.out.println("nobody has trump cards");
+        }
+        return player;
+    }
+
+
+    public static int makeChoice(Card[]  choices){
+        System.out.println("0. Quit/Cancel" );
+        for (int i = 0; i < choices.length; i++) {
+            System.out.println((i+1) + ". " + choices[i]);
+        }
+
+        boolean choiceMade = false;
+        Scanner scn = new Scanner(System.in);
+        int choice = -1;
+
+        while(!choiceMade){
+            try {
+                int temp = scn.nextInt();
+                if(temp <= choices.length){
+                    if(temp > 0 ){
+                        choice = temp -1;
+                    }
+                    choiceMade = true;
+                }else{
+                   throw new Exception();
+                }
+
+            }catch(Exception e){
+
+                System.out.println("Not a valid choice!");
+                scn.nextLine();
+            }
+
+        }
+
+
+        return choice;
+    }
+
 }
 
-
+// HomeWork
+// 0. printing chosen attacker card !!!
+// 1. function attack
+// 2. find out de underline !!!
+// 3. function defend
+// 4. player attack/defend loop >>> while loop
+// 5. outerloop whole game loop
+// 6. one more paramete for makeChoice (boolean) skippable if true 0. option => true / not skippable >> choice need to be a valid card
 
